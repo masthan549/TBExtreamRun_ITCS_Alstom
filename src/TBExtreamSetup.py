@@ -10,13 +10,12 @@ def script_exe(LDRAToolsuitePath, sourceFilePath, tcfPath, TkObject_ref, statusB
     
     #Set the curret directory
     os.chdir('.')    
+    sourceFilePath = sourceFilePath.replace("/","\\")   
     tcfPath = tcfPath.replace('/', '\\')    
     tcfName = tcfPath.split("\\")[len(tcfPath.split("\\"))-1]
     tcfPath = tcfPath.split("\\")[:len(tcfPath.split("\\"))-1]
     tcfPath = "\\".join(tcfPath) 
-    
-    print(tcfPath)
-    print(tcfName)    
+  
     
     statusBarText.set("TBExtream Batch file execution in progress, please wait...")
     
@@ -26,22 +25,22 @@ def script_exe(LDRAToolsuitePath, sourceFilePath, tcfPath, TkObject_ref, statusB
     if not path.exists(batchFile):           
         messagebox.showerror('Error','Please make sure vital and non_vital batch files are present in application folder!')
         TkObject_ref.destroy()
-        sys.exit()            
+        sys.exit()
+
+    try:
+        tcfPath = tcfPath.replace("\\","/")
+        p = subprocess.Popen([batchFile, tcfName, tcfPath, sourceFilePath, LDRAToolsuitePath], stdout = subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
+        stdout, stderr = p.communicate()
     
+        #This makes the wait possible
+        p_status = p.wait()
 
-    p = subprocess.Popen([batchFile, tcfName, tcfPath, sourceFilePath], stdout = subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
-    stdout, stderr = p.communicate()
-    
-    #This makes the wait possible
-    p_status = p.wait()
+        print("\n Number of Errors seen during batch file execution: "+str(stderr))
 
-    print("\n Number of Errors seen during batch file execution: "+str(stderr))
-
-    if(len(str(stderr))) > 0:
-        messagebox.showerror('Error','During batch file execution encountered error!.') 
+    except Exception as e:
+        messagebox.showerror("Error","During batch file execution exception raised!"+str(e))
         TkObject_ref.destroy()
-        sys.exit()        
-
+        sys.exit()           
 
     statusBarText.set("DONE!!")    
     messagebox.showinfo('DONE!!',"TB Extream execution done!")
