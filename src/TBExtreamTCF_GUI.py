@@ -33,7 +33,6 @@ class GUI_COntroller:
         Entry_LDRAToolSuitePath.place(x=290,y=124)					
         Entry_LDRAToolSuitePath.config(font=('helvetica',10), state="readonly")	
 
-
  
         #2. select TCF file directory
         TCFFile=Button(TkObject_ref,activebackground='green',borderwidth=3, anchor="w", text='2. Select TCF file:',width=30, command=lambda:GUI_COntroller.selectResDirectory("TCFFile"), cursor="hand2")
